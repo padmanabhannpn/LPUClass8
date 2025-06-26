@@ -76,7 +76,7 @@ app.get('/getusers',async(req,res) =>
 {
     try
     {
-        const user = await userModel.find({});
+        const user = await userModel.find({});//,'name'
         res.status(200).json({
             httpcode:200,
                 status:true,
@@ -94,6 +94,37 @@ app.get('/getusers',async(req,res) =>
             })
     }
 
+})
+
+// GEtting particular user
+
+app.get('/users/:name',async(req,res) => {
+
+    try{ 
+
+        const user = await userModel.findOne({name:req.params.name},['name','subject']);
+
+        if(!user)
+        {
+            return res.status(404).json({
+            httpcode:404,
+                status:true,
+                message:"User Not fpond",
+                data:user
+        })
+        }
+
+         res.status(200).json({
+            httpcode:200,
+                status:true,
+                message:"Get Users",
+                data:user
+        })
+
+    } catch(error)
+    {
+
+    }
 })
 
 
