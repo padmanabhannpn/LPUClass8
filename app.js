@@ -15,10 +15,31 @@ const userModel = require('./userModel');
 
 app.post('/createuser',async(req,res) => 
 {
+    try{
+        const user = new userModel({name:req.body.name,subject:req.body.subject});
+        const saveData = await user.save();
 
-    const user = new userModel({name:req.body.name,subject:req.body.subject});
+           res.status(200).json({
+                httpcode:200,
+                status:true,
+                message:"User created",
+                data:{
+                    name: saveData.name,
+                    subject:saveData.subject
+                }
+            })
+    }
+    catch(e)
+    {
+            res.status(500).json({
+                httpcode:500,
+                status:false,
+                message:"Faild to create user",
+                error:error.message
+            })
+    }
 
-    const saveData = await user.save();
+    
 
 })
 
