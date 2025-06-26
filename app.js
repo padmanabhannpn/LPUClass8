@@ -127,6 +127,82 @@ app.get('/users/:name',async(req,res) => {
     }
 })
 
+// Update the record
+
+app.put('/updateuser/:name',async (req,res) => 
+{
+
+    try{
+            const updatauser = await userModel.findOneAndUpdate({name:req.params.name},
+                {
+                    name:req.body.name,
+                    subject:req.body.subject
+                },
+                {
+                    new:true
+                }
+            )
+
+            if(!updatauser)
+        {
+            return res.status(404).json({
+            httpcode:404,
+                status:true,
+                message:"User Not fpond",
+                data:user
+        })
+        }
+
+         res.status(200).json({
+            httpcode:200,
+                status:true,
+                message:"Get Users",
+                data:updatauser
+        })
+
+    }
+    catch(error)
+    {
+        res.status(500).json({
+                httpcode:500,
+                status:false,
+                message:"Faild to create user",
+                error:error.message
+            })
+    }
+
+})
+
+//Delete
+
+app.delete('/deleteuser/:name',async(req,res) =>
+{
+    try{
+            const deleteuser = await userModel.findOneAndDelete({name:req.params.name});
+
+                if(!deleteuser)
+        {
+            return res.status(404).json({
+            httpcode:404,
+                status:true,
+                message:"User Not fpond",
+                data:user
+        })
+        }
+
+         res.status(200).json({
+            httpcode:200,
+                status:true,
+                message:"Delete the user",
+                
+        })
+    }
+    catch(e)
+    {
+
+    }
+})
+
 
 app.listen(3020,() => {
     console.log("Server running")
