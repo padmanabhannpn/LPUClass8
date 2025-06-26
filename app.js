@@ -29,8 +29,36 @@ app.post('/createuser',async(req,res) =>
                 }
             })
     }
-    catch(e)
+    catch(error)
     {
+        if (error.name === 'ValidationError') {
+      const messages = {};
+      let statusCode = 400;
+
+      for (let field in error.errors) {
+        const err = error.errors[field];
+        messages[field] = err.message;
+
+        // Optional: set custom status code per error type
+        if (err.kind === 'required') {
+          statusCode = 422; // Unprocessable Entity
+        } else if (err.kind === 'minlength') {
+          statusCode = 406; // Not Acceptable
+        } else if (err.kind === 'maxlength') {
+          statusCode = 413; // Payload Too Large
+        } else {
+          statusCode = 400; // Generic validation error
+        }
+      }
+
+      return res.status(statusCode).json({
+        HttpCode: statusCode,
+        Status: false,
+        Message: "Validation error",
+        Errors: messages
+      });
+    }
+
             res.status(500).json({
                 httpcode:500,
                 status:false,
@@ -40,6 +68,31 @@ app.post('/createuser',async(req,res) =>
     }
 
     
+
+})
+
+// Get All users
+app.get('/getusers',async(req,res) => 
+{
+    try
+    {
+        const user = await userModel.find({});
+        res.status(200).json({
+            httpcode:200,
+                status:true,
+                message:"Get All Users",
+                data:user
+        })
+    }
+    catch(error)
+    {
+            res.status(500).json({
+                httpcode:500,
+                status:false,
+                message:"Faild to create user",
+                error:error.message
+            })
+    }
 
 })
 
